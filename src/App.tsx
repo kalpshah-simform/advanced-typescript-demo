@@ -1,6 +1,17 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import TodosComponent from "./examples/todosComponent";
+import APIFetchComponent from "./examples/APIFetchComponent";
+import TypescriptExampleComponent from "./examples/TypescriptExampleComponent";
+import { CounterProvider } from "./contexts/counterContext";
+import wrapComponent from "./examples/wrapperComponent";
+
+const WrappedTodosComponent = wrapComponent(TodosComponent);
+const WrappedAPIFetchComponent = wrapComponent(APIFetchComponent);
+const WrappedTypescriptExampleComponent = wrapComponent(
+  TypescriptExampleComponent,
+);
 
 function App() {
   return (
@@ -14,6 +25,13 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
+      <WrappedTodosComponent key="todos" wrapperClassname="card" />
+      <WrappedAPIFetchComponent key="API" wrapperClassname="card" />
+
+      <CounterProvider initialCount={0}>
+        <WrappedTypescriptExampleComponent />
+      </CounterProvider>
+
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
