@@ -136,8 +136,68 @@ Result:
 | Flexibility | Less strict | More strict |
 | Common use | API responses, input types | Combining objects |
 
-## 4. Real-world Sidebar Architecture Example
-This is real scalable architecture.
+## 4. Discriminated Unions
+
+A **Discriminated Union** (also called **Tagged Union**) uses a common property to distinguish between different union members. This property acts as a "discriminator".
+
+**Key idea:** One literal property uniquely identifies the type variant.
+
+```ts
+type Circle = {
+  kind: "circle";
+  radius: number;
+};
+
+type Square = {
+  kind: "square";
+  side: number;
+};
+
+type Shape = Circle | Square;
+```
+
+**Why discriminated unions are powerful:**
+- Type narrowing: Once you check the discriminator, TypeScript narrows the type automatically
+- Exhaustive checking: TypeScript catches if you forget to handle a variant
+- Self-documenting: The discriminator makes intent clear
+
+Usage:
+
+```ts
+function getArea(shape: Shape): number {
+  switch (shape.kind) {
+    case "circle":
+      return Math.PI * shape.radius ** 2; // ✅ shape.radius available
+    case "square":
+      return shape.side ** 2; // ✅ shape.side available
+  }
+}
+```
+
+**API Response Example:**
+```ts
+type ApiResponse =
+  | { status: "success"; data: unknown }
+  | { status: "error"; error: string }
+  | { status: "loading" };
+
+function handleRequest(res: ApiResponse) {
+  switch (res.status) {
+    case "success":
+      console.log(res.data); // safe access
+      break;
+    case "error":
+      console.error(res.error); // safe access
+      break;
+    case "loading":
+      console.log("waiting...");
+  }
+}
+```
+
+## 5. Real-world Sidebar Architecture Example
+
+This is a truly scalable architecture.
 ### Step 1: Base type
 ```ts
 type BaseItem = {
@@ -218,7 +278,7 @@ function renderItem(item: MenuItem) {
 }
 ```
 
-## 5.Add Common Props with Intersection
+## 6. Add Common Props with Intersection
 Real apps need shared props:
 ```ts
 type BaseProps = {
@@ -235,7 +295,7 @@ type ButtonProps = BaseProps &
   );
 ```
 
-## 6. Flexible Input Component (Real-world)
+## 7. Flexible Input Component (Real-world)
 ```ts
 type InputProps =
   | {
@@ -260,7 +320,7 @@ function Input(props: InputProps) {
 }
 ```
 
-## 7. Type Guards in Components
+## 8. Type Guards in Components
 
 Sometimes props are complex:
 ```ts
@@ -283,7 +343,7 @@ if (isImage(props)) {
 }
 ```
 
-## 8. Loose Autocomplete with Union + Intersection
+## 9. Loose Autocomplete with Union + Intersection
 
 Sometimes we want IntelliSense suggestions for known values, while still allowing any custom string.
 
